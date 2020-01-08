@@ -1,0 +1,42 @@
+```
+最近在学习Python的requests库如何做接口测试，写了一个样例来实现对一个网站百度博客的指定帖子的回贴（仅做方法学习使用，勿做其他用途）
+先展示下原码
+--------------------------------------
+# coding=utf-8
+import requests
+import sys,time	
+import chardet
+import io
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+myheader = {
+"Connection": "keep-alive",
+"Content-Type": "application/x-www-form-urlencoded"
+}
+mydata = "actionFlag=loginAuthenticate&uid=yourw3accout&password=yourpassowrd"
+myheader2 = {
+"Connection": "keep-alive",
+"Content-Type": "application/json"
+}
+mydata2 = '{"comment":"写的很不错，赞一下","commentSource":0,"entityId":5029143,"parentId":0,"rootId":0,"terminalType":0,"entityTitle":"Jmeter操作介绍","entityCreatorW3Id":"l00182114","order":"0","pageNum":1}'
+session = requests.session()
+r1 = session.post('https://login.baidu.com/login/login.do',data=mydata,verify=False,headers=myheader)
+print r1.status_code
+r2 = session.post('http://blog.baidu.com/api/comment/v1/61/blog/comments',data=mydata2,verify=False,headers=myheader2)
+print r2.status_code
+# strautf8 = r2.text
+# print type(strautf8)
+# print chardet.detect("unicode")
+# with open(r'D:\pythontest\testcode\out2.txt', 'w') as ff:
+# ff.write(strautf8.encode('utf-8'))
+
+----------------------------------------------------------------------
+备注
+myheader和mydata是用来做登录接口使用，分别为登录接口r1的header内容和参数值（账号密码已去除，需修改成自己对应的网站账号和密码）
+myheader2和mydata2是用来做回贴使用，分别为回贴接口r2的header内容和请求参数值
+session = requests.Session() ----这一行主要调用了Session
+方法，可以存取相关的cookie，便于把登录之后相关的cookie给后面的接口使用。
+最后的5行内容，可以将请求返回的内容输出的txt文档中，方便查看，此处可以不用。
+ 
+接口获取的方法可以参见我的另外一篇博客
+```
